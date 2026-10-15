@@ -1,0 +1,19 @@
+# Rust build output
+/target/
+
+# Local OS and editor files
+.DS_Store
+Thumbs.db
+/.idea/
+/.vscode/
+*.swp
+*.swo
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# Browser verification artifacts
+/output/playwright/
+/.playwright-cli/

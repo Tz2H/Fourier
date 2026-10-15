@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f3ef">
+  <title>Fourier Studio · 线条，循圆而生</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="header">
+    <a class="brand" href="/" aria-label="Fourier Studio 首页">
+      <svg class="brand-icon" viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="22" r="13"/><circle cx="28" cy="12" r="7"/><path d="M17 22 28 12 34 9"/><circle class="brand-tip" cx="34" cy="9" r="2.5"/></svg>
+      <span>fourier<span class="brand-light"> / studio</span></span>
+    </a>
+    <div class="header-note">把旋转，变成笔迹。<span class="local-badge"><i></i> 本地运行</span></div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar">
+      <div class="intro"><p class="eyebrow">AN EXPLORATION OF MOTION</p><h1>线条，<br>循圆而生<span>。</span></h1><p class="intro-copy">把一张图片交给旋转的圆。<br>看它们接力，描出熟悉的轮廓。</p></div>
+      <section aria-labelledby="source-title">
+        <div class="section-heading"><h2 id="source-title"><span>01</span> 选择图片</h2><button class="text-button" id="sample">使用示例 ↗</button></div>
+        <label class="source-card" id="drop-zone" for="file" tabindex="0" role="button" aria-label="选择或拖入 PNG、JPEG 图片">
+          <div class="preview-frame"><img id="preview" src="/sample.jpeg" alt="当前输入图片：奶蛙示例"><span class="replace-label">↗ 更换图片</span></div>
+          <span class="source-caption"><strong id="filename">奶蛙 · 示例图片</strong><small id="dimensions">PNG / JPEG · 最大 32 MB</small></span>
+        </label>
+        <input id="file" type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" hidden>
+        <p class="upload-hint">点击选择，或将图片拖到这里</p>
+      </section>
+      <section class="detail-section" aria-labelledby="detail-title">
+        <div class="section-heading"><h2 id="detail-title"><span>02</span> 线条细节</h2><span class="muted-label">自动调优</span></div>
+        <div class="presets" role="group" aria-label="线条细节预设">
+          <button data-detail="simple" aria-pressed="false">简约</button>
+          <button data-detail="balanced" aria-pressed="true">均衡</button>
+          <button data-detail="fine" aria-pressed="false">精细</button>
+        </div>
+        <p class="preset-description" id="preset-description">保留主体轮廓，也照顾眼睛与手臂的细节。</p>
+      </section>
+      <div class="sidebar-note"><span class="note-star">✳</span><p>每一个圆，都贡献一点形状。<br>旋转的末端，描绘每段线条。</p></div>
+      <p id="error" class="error" role="alert" hidden></p>
+      <p class="privacy">图片仅在本机处理，不上传云端。</p>
+    </aside>
+
+    <section class="drawing-panel" aria-label="傅里叶绘图工作台">
+      <div class="panel-header"><div><span class="live-dot"></span><h2>绘图工作台</h2><span class="pill">逐笔绘制</span></div><span class="document-stats" id="stats">准备轮廓中</span></div>
+      <div class="stage" id="stage">
+        <canvas id="canvas" tabindex="0" aria-label="傅里叶绘图画布。滚轮缩放，拖动平移。加减键缩放，0 键适应画布。"></canvas>
+        <div class="stage-label"><span>THE DRAWING FIELD</span><small id="stage-status" aria-live="polite">准备开始</small></div>
+        <div class="view-toolbar" aria-label="画布工具">
+          <button id="circles" class="icon-button" aria-label="显示旋转圆" title="显示或隐藏旋转圆" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="14" r="6"/><circle cx="16.5" cy="7.5" r="4"/><path d="m9 14 7.5-6.5"/></svg></button>
+          <span class="toolbar-divider"></span>
+          <button id="zoom-out" class="icon-button" aria-label="缩小" title="缩小（−）">−</button>
+          <button id="zoom-value" class="zoom-value" aria-label="恢复适应画布" title="点击恢复适应画布">100%</button>
+          <button id="zoom-in" class="icon-button" aria-label="放大" title="放大（+）">+</button>
+          <span class="toolbar-divider"></span>
+          <button id="fit" class="icon-button" aria-label="适应画布" title="适应画布（0 或双击）"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/></svg></button>
+        </div>
+        <div id="loading" class="loading" role="status"><span class="loader"></span><strong>正在把图像化为线条</strong><small>提取轮廓 · 安排笔画 · 分解旋转向量</small></div>
+        <div class="canvas-legend"><span class="legend-line"></span>绘制轨迹 <span class="legend-circle"></span>旋转向量</div>
+        <div class="playback">
+          <button id="play" class="play-button" aria-label="播放绘制" title="播放 / 暂停（空格）" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-icon" d="m9 5 11 7-11 7Z"/></svg></button>
+          <div class="timeline"><div class="timeline-label"><span id="play-label">准备就绪后开始</span><span id="progress-label">0%</span></div><input id="progress" aria-label="绘制进度" type="range" min="0" max="1000" value="0" disabled></div>
+          <button id="restart" class="icon-button restart" aria-label="重新绘制" title="重新绘制" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg></button>
+        </div>
+      </div>
+      <div class="panel-footer"><span>滚轮缩放<span class="footer-dot">·</span>拖动平移<span class="footer-dot">·</span>双击适应</span><span id="drawing-note">断点平滑抬笔，轮廓之间不留连接线。</span></div>
+    </section>
+  </main>
+  <footer class="footer"><span>FOURIER STUDIO</span><span>从一张图片，到无数个圆，再到一幅画。</span><span>数学，也可以很好看。</span></footer>
+  <noscript>请启用浏览器 JavaScript，以显示绘图和交互。图像计算仍由本机 Rust 程序完成。</noscript>
+</body>
+</html>
